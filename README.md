@@ -47,3 +47,16 @@ A host page can mount the UI with a serializable session:
 ```
 
 The UI layer stays focused on `ext-model` inputs and outputs; the worker owns the substrate page models and remote calls.
+
+## Deployable project
+
+The `web/` directory is a self-contained browser surface for the slice. It includes:
+
+- `web/index.html` and `web/styles.css` — the Currency workspace.
+- `web/app.js` — the browser-side ext-model-shaped adapter.
+- `web/static/substrate/worker.js` — a deployable worker fallback with the same message boundary as the compiled substrate worker.
+- `netlify.toml` — publishes `web/` as a static Netlify site.
+
+The fallback worker keeps the deployed project usable without a local Clojure toolchain. Running `lein build-worker` replaces that file with the compiled `xt.substrate` artifact while keeping the page boundary stable.
+
+The production host for this project is intended to be `v1-slim.statstrade.io`.
