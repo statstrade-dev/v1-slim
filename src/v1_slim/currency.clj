@@ -10,11 +10,9 @@
                    :lang/jsx false}
             :notify {:type :webpage :path "dev/notify"}}
    :require [[js.react :as r :include [:fn]]
-             [js.react.ext-model :as ext-model]
              [js.react-native :as n :include [:fn]]
              [xt.lang.base-lib :as k]
              [statslink.app.substrate :as substrate-app]
-             [statslink.substrate.page :as page]
              [iberia.substrate-hook :as substrate-hook]]
    :export [MODULE]})
 
