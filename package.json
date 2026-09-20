@@ -1,0 +1,8 @@
+{
+  "name": "v1-slim",
+  "private": true,
+  "scripts": {
+    "check": "node --check web/app.js && node --check web/static/substrate/worker.js"
+  }
+}
+
