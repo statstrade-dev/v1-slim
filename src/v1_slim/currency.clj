@@ -61,7 +61,7 @@
                  (. (substrate-hook/refresh list-model [])
                     (then
                      (fn []
-                       (return result))))))))))
+                       (return result)))))))))))
   (return {:models {:list list-model
                     :detail detail-model
                     :create create-model
