@@ -88,4 +88,4 @@
                  -/CURRENCY_DELETE_ROUTE
                  [account-id currency-id])))
 
-(def.js MODULE (!:module))
+(def.xt MODULE (!:module))
