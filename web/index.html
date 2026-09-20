@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0d12" />
+    <meta
+      name="description"
+      content="A small Statstrade Currency slice running across an xt.substrate-style worker boundary."
+    />
+    <title>Currency substrate · Statstrade v1-slim</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <div class="page-glow page-glow-one" aria-hidden="true"></div>
+    <div class="page-glow page-glow-two" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Statstrade v1-slim home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>STATSTRADE <em>/ v1-slim</em></span>
+      </a>
+      <div class="topbar-meta">
+        <span class="transport-state">
+          <span class="status-dot is-connecting" id="transport-dot"></span>
+          <span id="transport-label">connecting worker</span>
+        </span>
+        <a class="source-link" href="https://github.com/statstrade-dev/v1-slim" target="_blank" rel="noreferrer">
+          source <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span> Thin vertical · currency</p>
+          <h1 id="page-title">A smaller surface for<br /><span>currency state.</span></h1>
+          <p class="hero-copy">
+            One focused slice, one serializable session, and a worker boundary that keeps the browser UI
+            independent from the remote model.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="button button-primary" type="button" id="refresh-button">Refresh slice <span aria-hidden="true">↻</span></button>
+          <p class="sync-label" id="last-sync">waiting for the substrate</p>
+        </div>
+      </section>
+
+      <section class="metric-grid" aria-label="Slice status">
+        <article class="metric-card">
+          <p class="metric-label">Active currencies</p>
+          <p class="metric-value" id="currency-count-metric">—</p>
+          <p class="metric-note">in the current page group</p>
+        </article>
+        <article class="metric-card">
+          <p class="metric-label">Page group</p>
+          <p class="metric-value metric-value-small">currency</p>
+          <p class="metric-note">list · brief · detail</p>
+        </article>
+        <article class="metric-card">
+          <p class="metric-label">Transport</p>
+          <p class="metric-value metric-value-small" id="transport-metric">worker</p>
+          <p class="metric-note">substrate boundary</p>
+        </article>
+        <article class="metric-card metric-card-accent">
+          <p class="metric-label">Session</p>
+          <p class="metric-value metric-value-small">serializable</p>
+          <p class="metric-note">safe to hand to the host</p>
+        </article>
+      </section>
+
+      <section class="workspace" aria-label="Currency workspace">
+        <aside class="panel list-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">Currency list</p>
+              <h2>Browse the group <span class="counter" id="currency-count">0</span></h2>
+            </div>
+            <label class="search-field">
+              <span aria-hidden="true">⌕</span>
+              <span class="sr-only">Filter currencies</span>
+              <input id="currency-filter" type="search" placeholder="Filter" autocomplete="off" />
+            </label>
+          </div>
+          <div class="currency-list" id="currency-list" aria-live="polite"></div>
+          <div class="panel-footer"><span class="footer-pulse" aria-hidden="true"></span> list model synced from worker</div>
+        </aside>
+
+        <section class="panel detail-panel" aria-labelledby="detail-title">
+          <div class="panel-heading detail-heading">
+            <div>
+              <p class="panel-kicker">Currency detail</p>
+              <h2 id="detail-title">Selected record</h2>
+            </div>
+            <span class="record-badge" id="detail-badge">—</span>
+          </div>
+
+          <div class="empty-state" id="detail-empty">
+            <span class="empty-icon" aria-hidden="true">◌</span>
+            <p>Select a currency to inspect its detail model.</p>
+          </div>
+
+          <div class="detail-content" id="detail-content" hidden>
+            <div class="detail-identity">
+              <div class="currency-symbol" id="detail-symbol">$</div>
+              <div>
+                <p class="detail-code" id="detail-code">USD</p>
+                <h3 id="detail-name">United States dollar</h3>
+                <p class="detail-region" id="detail-region">North America</p>
+              </div>
+            </div>
+            <div class="detail-stats">
+              <div><span>ISO code</span><strong id="detail-iso">USD</strong></div>
+              <div><span>Decimals</span><strong id="detail-decimals">2</strong></div>
+              <div><span>Model</span><strong>detail</strong></div>
+            </div>
+            <form class="modify-form" id="modify-form">
+              <div class="form-heading"><span>Modify model</span><small>ext-model seam</small></div>
+              <div class="form-row">
+                <label>Display name<input id="modify-name" name="name" required /></label>
+                <label>Symbol<input id="modify-symbol" name="symbol" maxlength="4" required /></label>
+              </div>
+              <button class="button button-secondary" type="submit">Save change <span aria-hidden="true">→</span></button>
+              <p class="form-message" id="modify-message" role="status"></p>
+            </form>
+          </div>
+        </section>
+
+        <aside class="panel create-panel" aria-labelledby="create-title">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">Create model</p>
+              <h2 id="create-title">Add a currency</h2>
+            </div>
+            <span class="create-plus" aria-hidden="true">＋</span>
+          </div>
+          <form class="create-form" id="create-form">
+            <label>ISO code<input name="code" placeholder="GBP" maxlength="3" required /></label>
+            <label>Display name<input name="name" placeholder="Pound sterling" required /></label>
+            <div class="form-row">
+              <label>Symbol<input name="symbol" placeholder="£" maxlength="4" required /></label>
+              <label>Decimals<input name="decimals" type="number" min="0" max="4" value="2" required /></label>
+            </div>
+            <label>Region<input name="region" placeholder="Europe" required /></label>
+            <button class="button button-dark" type="submit">Create currency <span aria-hidden="true">↗</span></button>
+            <p class="form-message" id="create-message" role="status"></p>
+          </form>
+          <p class="create-note">The action crosses the same worker protocol as the eventual remote mutation.</p>
+        </aside>
+      </section>
+
+      <section class="protocol-panel" aria-labelledby="protocol-title">
+        <div>
+          <p class="panel-kicker">Thin vertical map</p>
+          <h2 id="protocol-title">The boundary stays small.</h2>
+        </div>
+        <div class="protocol-flow" aria-label="UI to worker to remote flow">
+          <div class="protocol-step"><span>01</span><strong>ext-model</strong><small>view + action seam</small></div>
+          <span class="protocol-arrow" aria-hidden="true">→</span>
+          <div class="protocol-step protocol-step-active"><span>02</span><strong>xt.substrate</strong><small>page group + session</small></div>
+          <span class="protocol-arrow" aria-hidden="true">→</span>
+          <div class="protocol-step"><span>03</span><strong>remote adapter</strong><small>serializable HTTP calls</small></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Statstrade · v1-slim</span>
+      <span>Built around a Currency page contract</span>
+    </footer>
+  </body>
+</html>
+
